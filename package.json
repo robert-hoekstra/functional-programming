@@ -1,0 +1,30 @@
+{
+  "name": "functional-programming",
+  "version": "1.0.0",
+  "description": "Packages needed for D3 Application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robert-hoekstra/functional-programming.git"
+  },
+  "keywords": [
+    "d3",
+    "visualization",
+    "techtrack",
+    "svg",
+    "html",
+    "css"
+  ],
+  "author": "Robert Franklin Hoekstra",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/robert-hoekstra/functional-programming/issues"
+  },
+  "homepage": "https://github.com/robert-hoekstra/functional-programming#readme",
+  "dependencies": {
+    "d3": "^5.12.0"
+  }
+}
