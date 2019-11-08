@@ -7,8 +7,7 @@ async function importDataset(){
 
          let kleurwaarde = element["Lievelingskleur (HEX code)"];
         kleurwaarde = kleurwaarde.replace("#","").replace(" ","");
-
-
+        
         if (kleurwaarde.length == 6) {
           } else {
               kleurwaarde = Math.floor(Math.random()*16777215).toString(16);
