@@ -16,7 +16,7 @@ async function importDataset(){
               // dit stukje gejat van stackoverflow. Genereert een random hexcode terug zodat de totale data niet extreme waardes aanneemt.
           }
 
-        return ("#" + kleurwaarde);  //voegt weer een # toe aan de hexreeks.
+        return ("#" + kleurwaarde);  //voegt weer een # toe aan de hexcode.
     })
     console.log(lijst)
 }
