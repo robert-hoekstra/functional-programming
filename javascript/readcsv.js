@@ -11,7 +11,7 @@ async function importDataset(){
 
         if (kleurwaarde.length == 6) {
           } else {
-              kleurwaarde = "000000".replace(/0/g,function(){return (~~(Math.random()*16)).toString(16);}); 
+              kleurwaarde = Math.floor(Math.random()*16777215).toString(16);
               
               // dit stukje gejat van stackoverflow. Genereert een random hexcode terug zodat de totale data niet extreme waardes aanneemt.
           }
