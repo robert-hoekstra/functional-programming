@@ -111,6 +111,12 @@ fetchData.then(function(data) {
   //   .entries(data.date);
   //   console.log(groupedByYear)
 
+  // Count total items.
+  let arraySize= 0;
+  data.forEach(element => {
+    arraySize++
+  });
+
   const render = data => {
     const xValue = d => d.date.value;
     const yValue = d => d.date.value;
@@ -119,11 +125,12 @@ fetchData.then(function(data) {
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
+
     // Set Domain and Range for xScale
     const xScale = d3
       .scaleLinear()
       .domain([0, d3.max(data, xValue)])
-      .range([0, innerWidth]);
+      .range([0, counter]);
 
     // Set Domain and Range for yScale
     const yScale = d3
