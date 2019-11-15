@@ -106,23 +106,26 @@ fetchData.then(function(data) {
   const width = +svg.attr("width");
   const height = +svg.attr("height");
 
-//   var groupedByYear = d3.nest()
-//   .key(function(d) { return d.date; })
-//   .entries(data.date);
-//   console.log(groupedByYear)
+  //   var groupedByYear = d3.nest()
+  //   .key(function(d) { return d.date; })
+  //   .entries(data.date);
+  //   console.log(groupedByYear)
 
   const render = data => {
     const xValue = d => d.date.value;
     const yValue = d => d.date.value;
+    //Add margin to make SVG bit more readable. And space for titles, axisticks and descriptions.
     const margin = { top: 20, right: 40, bottom: 20, left: 100 };
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
+    // Set Domain and Range for xScale
     const xScale = d3
       .scaleLinear()
       .domain([0, d3.max(data, xValue)])
       .range([0, innerWidth]);
 
+    // Set Domain and Range for yScale
     const yScale = d3
       .scaleBand()
       .domain(data.map(yValue))
@@ -130,15 +133,14 @@ fetchData.then(function(data) {
       .padding(0.1);
 
     // const yAxis = d3.axisLeft(yScale);
-
+// set svg to const g to work with
     const g = svg
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
     g.append("g").call(d3.axisLeft(yScale));
     g.append("g")
-      .call(d3.axisBottom(xScale)
-        .tickSize(-innerWidth))
+      .call(d3.axisBottom(xScale).tickSize(-innerWidth))
       .attr("transform", `translate(0,${innerHeight})`);
 
     g.append("text")
@@ -161,8 +163,9 @@ fetchData.then(function(data) {
     //     .style("font-size","12px")
     //     .call(d3.legend)
 
-    console.log("domein" + xScale.range());
   };
+
+  //Activeer render functie met gegeven dataset
   render(gallerij);
 
   // !!! UNUSED CODE !!!
