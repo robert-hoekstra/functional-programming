@@ -154,9 +154,13 @@ fetchData.then(function(data) {
     // Display all objects with a rectangle. (to make bars)
     //Set width per bar based on full size SVG
     g.selectAll("rect")
+      //What data needs to be added  
       .data(gallerij)
+      //Check DOM if there are enough elements. If not make extra.
       .enter()
+      //Append the rect value to DOM-element
       .append("rect")
+      // Set attributes to display barsizes
       .attr("y", d => yScale(yValue(d)))
       .attr("width", d => xScale(xValue(d)))
       .attr("height", yScale.bandwidth());
