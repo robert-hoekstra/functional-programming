@@ -106,6 +106,15 @@ Foto's is declared by the termmaster: <https://hdl.handle.net/20.500.11840/termm
 }
 ```
 
+#### JSON Objects
+The data is being retrieved through the Query but needs to be parsed into the application. We do so by using the `d3.json` method that comes with the D3.js package.
+
+The data is given in 1 array that contains loads of objects. In our case 7130 objects to be exact. These objects contains 7 properties such as: Date, Materials, Title, Description, Image etc,
+
+To read more about the data modiyfing and cleaning. Go to this [wiki]()
+
+These properties are being read by D3 functionalities to produce a chart.
+
 ### Browser-based
 The application is run within a browser environment. The application is a prototype for something that could be a exhibition at the museum.
 
