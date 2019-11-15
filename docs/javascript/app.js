@@ -122,7 +122,7 @@ fetchData.then(function(data) {
     const xScale = d3
       .scaleLinear()
       .domain([0, d3.max(data, xValue)])
-      .range([0, counter]);
+      .range([0, arraySize]);
 
     // Set Domain and Range for yScale
     //Set distance between bars with Scaleband
@@ -155,10 +155,10 @@ fetchData.then(function(data) {
     //Set width per bar based on full size SVG
     g.selectAll("rect")
       //What data needs to be added  
-      .data(gallerij)
       //Check DOM if there are enough elements. If not make extra.
-      .enter()
+      .data(gallerij)
       //Append the rect value to DOM-element
+      .enter()
       .append("rect")
       // Set attributes to display barsizes
       .attr("y", d => yScale(yValue(d)))
