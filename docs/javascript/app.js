@@ -1,6 +1,6 @@
-
 // setup api url and query
-const url =    'https://api.data.netwerkdigitaalerfgoed.nl/datasets/ivo/NMVW/services/NMVW-27/sparql';
+const url =
+  "https://api.data.netwerkdigitaalerfgoed.nl/datasets/ivo/NMVW/services/NMVW-27/sparql";
 const query = `
     PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
     PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -30,179 +30,184 @@ const query = `
 
                 }
 
-            }LIMIT 100`;
+            }LIMIT 500`;
 
-        const fetchData = d3.json(url+'?query='+encodeURIComponent(query)+'&format=json')
-        .then(function(data) {
-             console.log(data)
+const fetchData = d3
+  .json(url + "?query=" + encodeURIComponent(query) + "&format=json")
+  .then(function(data) {
+    console.log(data);
 
-            return data.results.bindings
-          });
+    return data.results.bindings;
+  });
 
-          fetchData.then(function (data) {
+fetchData.then(function(data) {
+  // Check if properties contain images.
 
-            // Check if properties contain images.
+  let gallerij = data.filter(obj => Object.keys(obj).includes("imgLink"));
+  // Delete properties that are not needed
+  gallerij.forEach(element => {
+    delete element.cho;
+    delete element.type;
+    delete element.typeLabel;
+  });
 
-            let gallerij = data.filter(obj => Object.keys(obj)
-            .includes("imgLink")
-            
-            );
-            // Delete properties that are not needed
-            gallerij.forEach(element =>  {
-                delete element.cho
-                delete element.type
-                delete element.typeLabel
-            });
+  // Clean date to uniform
+  // console.log("galerij: ", gallerij)
 
-            // Clean date to uniform 
-            // console.log("galerij: ", gallerij)
+  // const maanden = ["januari", "februari","maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"]
 
-            // const maanden = ["januari", "februari","maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"]
+  gallerij.forEach(element => {
+    element.date.value = element.date.value
+      .toLowerCase()
+      .replace("ca. ", "")
+      .replace("ca.", "")
+      .replace("voor", "")
+      .replace("/", " ")
+      //vervang alle streepjes in de data
+      .replace(/-/g, " ")
+      //.replace(/\D/g, "")
 
-             gallerij.forEach(element => {
-                 
-                 element.date.value = element.date.value
-                 .toLowerCase()
-                 .replace("ca. ", "")
-                 .replace("ca.", "")
-                 .replace("voor", "")
-                 .replace("/", " ")
-                 //vervang alle streepjes in de data
-                 .replace(/-/g, " ")
-                 //.replace(/\D/g, "")
+      //Vervang alle maanden
+      .replace("januari", "")
+      .replace("februari", "")
+      .replace("maart", "")
+      .replace("april", "")
+      .replace("mei", "")
+      .replace("juni", "")
+      .replace("juli", "")
+      .replace("augustus", "")
+      .replace("september", "")
+      .replace("oktober", "")
+      .replace("november", "")
+      .replace("december", "")
+      //Verwijder alle witruimte voor en aan het end van de string
+      .trim(" ")
+      //only keep last year from entry
+      .substr(-4, 4);
+    // String naar nummer
+    element.date.value = parseInt(element.date.value);
 
-                 
-                 //Vervang alle maanden
-                 .replace("januari", "")
-                 .replace("februari", "")
-                 .replace("maart", "")
-                 .replace("april", "")
-                 .replace("mei", "")
-                 .replace("juni", "")
-                 .replace("juli", "")
-                 .replace("augustus", "")
-                 .replace("september", "")
-                 .replace("oktober", "")
-                 .replace("november", "")
-                 .replace("december", "")
-                //Verwijder alle witruimte voor en aan het end van de string
-                .trim(" ")
-                //only keep last year from entry
-                .substr(-4, 4)
-                // String naar nummer
-                element.date.value = parseInt(element.date.value)
+    // Titel cleanup
+    element.titel.value = element.titel.value.trim();
 
-                // Titel cleanup
-                element.titel.value = element.titel.value
-                .trim()
+    // Beschrijving Cleanup
+    element.beschrijving.value = element.beschrijving.value.trim();
+    // Als er geen beschrijving beschikbaar is. Informeer dan de gebruiker.
+    if (element.beschrijving.value == "") {
+      element.beschrijving.value = "Er is geen beschrijving beschikbaar";
+    }
+  });
 
-                // Beschrijving Cleanup
-                element.beschrijving.value = element.beschrijving.value
-                .trim()
-                // Als er geen beschrijving beschikbaar is. Informeer dan de gebruiker.
-                if(element.beschrijving.value == ""){
-                    element.beschrijving.value = "Er is geen beschrijving beschikbaar"
-                }
-            })
+  // console.log(gallerij)
 
-            // console.log(gallerij)
+  // Start Graph section
+  const svg = d3.select("svg");
 
-// Start Graph section
-const svg = d3.select('svg');
+  const width = +svg.attr("width");
+  const height = +svg.attr("height");
 
-const width = +svg.attr('width');
-const height = +svg.attr('height');
-
-const render = data => {
+  const render = data => {
     const xValue = d => d.date.value;
     const yValue = d => d.date.value;
-    
-    const xScale = d3.scaleLinear()
-        .domain([0, d3.max(data, xValue)])
-        .range([0, width]);
+    const margin = { top: 20, right: 40, bottom: 20, left: 100 };
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
 
-    const yScale = d3.scaleBand()
-    .domain(data.map(yValue))
-    .range([0, height]);
-  
-    svg.selectAll('rect').data(gallerij)
-    .enter().append('rect')
-    .attr('y', d => yScale(yValue(d)))
-     .attr('width', d => xScale(xValue(d)))
-     .attr('height', yScale.bandwidth());
+    const xScale = d3
+      .scaleLinear()
+      .domain([0, d3.max(data, xValue)])
+      .range([0, innerWidth]);
 
+    const yScale = d3
+      .scaleBand()
+      .domain(data.map(yValue))
+      .range([0, innerHeight])
+      .padding(0.1);
 
-     console.log("domein" + xScale.range());
+    // const yAxis = d3.axisLeft(yScale);
 
-};
-render(gallerij);
+    const g = svg
+      .append("g")
+      .attr("transform", `translate(${margin.left},${margin.top})`);
 
+    g.append("g").call(d3.axisLeft(yScale));
+    g.append("g")
+      .call(d3.axisBottom(xScale))
+      .attr("transform", `translate(0,${innerHeight})`);
 
+    g.append("text")
+      .attr("x", width / 2)
+      .attr("y", 0 - margin.top / 4)
+      .attr("text-anchor", "middle")
+      .text("Aantal foto's per jaartal");
 
-// !!! UNUSED CODE !!!
+    g.selectAll("rect")
+      .data(gallerij)
+      .enter()
+      .append("rect")
+      .attr("y", d => yScale(yValue(d)))
+      .attr("width", d => xScale(xValue(d)))
+      .attr("height", yScale.bandwidth());
 
- 
-//  console.log(gallerij);
-              
-            
-            // for (let i=0; i < data.length; i++){
-            //     let objectItem = data[i];
-            //     // objectItem.cho = objectItem.cho.value;
-            //     // objectItem.type = objectItem.type.value;
-            //     // console.log(i)
-            //     // objectItem.date = objectItem.date.value;
+    console.log("domein" + xScale.range());
+  };
+  render(gallerij);
 
-            //     // if (objectItem.image == undefined) {
-            //     //     objectItem.image = null
-            //     //     return objectItem.image
-            //     // }
+  // !!! UNUSED CODE !!!
 
-            //     if (objectItem.imgLink) {
-            //         objectItem.image = objectItem.imgLink.value
-                    
-            //     } else {
-            //         delete objectItem
-            //     }
-                    
+  //  console.log(gallerij);
 
-                // if objectItem.
+  // for (let i=0; i < data.length; i++){
+  //     let objectItem = data[i];
+  //     // objectItem.cho = objectItem.cho.value;
+  //     // objectItem.type = objectItem.type.value;
+  //     // console.log(i)
+  //     // objectItem.date = objectItem.date.value;
 
-            //     console.log(objectItem.image)
+  //     // if (objectItem.image == undefined) {
+  //     //     objectItem.image = null
+  //     //     return objectItem.image
+  //     // }
 
-    
-            // }
-            // return data
+  //     if (objectItem.imgLink) {
+  //         objectItem.image = objectItem.imgLink.value
 
-                        
-       // handle data
-    //    const handleData = (json) =>{
-    //        let bindings =  json.results.bindings;
-    //        for (let i=0; i < bindings.length; i++){
-    //            let objectItem = bindings[i];
-    //            objectItem.cho = objectItem.cho.value;
-    //            objectItem.placeName = objectItem.placeName.value;
-    //            objectItem.title = objectItem.title.value;
-    //            objectItem.type = objectItem.type.value;
-    //            objectItem.image = objectItem.imageLink.value;
-    //        }
-    //        console.log(bindings);
-    //        return bindings
-    //    };
-       // fetch data
+  //     } else {
+  //         delete objectItem
+  //     }
 
-       
-    //    fetch(url+'?query='+encodeURIComponent(query)+'&format=json')
-    //        .then(res => res.json())
-    //        .then(handleData => {
+  // if objectItem.
 
-    //         console.log(handleData)
-    //         handleData.map()
+  //     console.log(objectItem.image)
 
-    //        })
-    //        .catch(err => console.error(err));
+  // }
+  // return data
 
-    // Fetch Query
+  // handle data
+  //    const handleData = (json) =>{
+  //        let bindings =  json.results.bindings;
+  //        for (let i=0; i < bindings.length; i++){
+  //            let objectItem = bindings[i];
+  //            objectItem.cho = objectItem.cho.value;
+  //            objectItem.placeName = objectItem.placeName.value;
+  //            objectItem.title = objectItem.title.value;
+  //            objectItem.type = objectItem.type.value;
+  //            objectItem.image = objectItem.imageLink.value;
+  //        }
+  //        console.log(bindings);
+  //        return bindings
+  //    };
+  // fetch data
 
+  //    fetch(url+'?query='+encodeURIComponent(query)+'&format=json')
+  //        .then(res => res.json())
+  //        .then(handleData => {
 
-          });
-          
+  //         console.log(handleData)
+  //         handleData.map()
+
+  //        })
+  //        .catch(err => console.error(err));
+
+  // Fetch Query
+});

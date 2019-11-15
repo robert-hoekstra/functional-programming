@@ -1,0 +1,16 @@
+body {
+    margin: 0px;
+}
+
+rect {
+    fill:steelblue
+}
+
+svg text {
+    font-size: 1.4em;
+
+}
+
+svg{
+   position: block;
+}
