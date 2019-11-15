@@ -93,7 +93,7 @@ fetchData.then(function(data) {
 
   // console.log(gallerij)
 
-  // Start Graph section
+  // Start Graph section (with help of tutorial: https://www.youtube.com/watch?v=NlBt-7PuaLk)
   const svg = d3.select("svg");
   const width = +svg.attr("width");
   const height = +svg.attr("height");
