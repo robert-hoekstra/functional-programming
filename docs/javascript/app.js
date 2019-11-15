@@ -36,13 +36,11 @@ const fetchData = d3
   .json(url + "?query=" + encodeURIComponent(query) + "&format=json")
   .then(function(data) {
     console.log(data);
-
     return data.results.bindings;
   });
 
 fetchData.then(function(data) {
   // Check if properties contain images.
-
   let gallerij = data.filter(obj => Object.keys(obj).includes("imgLink"));
   // Delete properties that are not needed
   gallerij.forEach(element => {
@@ -50,10 +48,8 @@ fetchData.then(function(data) {
     delete element.type;
     delete element.typeLabel;
   });
-
   // Clean date to uniform
   // console.log("galerij: ", gallerij)
-
   // const maanden = ["januari", "februari","maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december"]
 
   gallerij.forEach(element => {
@@ -65,8 +61,7 @@ fetchData.then(function(data) {
       .replace("/", " ")
       //vervang alle streepjes in de data
       .replace(/-/g, " ")
-      //.replace(/\D/g, "")
-
+      //.replace(/\D/g, "") <-- not handy for this data. But removes every single non-digit char.
       //Vervang alle maanden
       .replace("januari", "")
       .replace("februari", "")
@@ -86,10 +81,8 @@ fetchData.then(function(data) {
       .substr(-4, 4);
     // String naar nummer
     element.date.value = parseInt(element.date.value);
-
     // Titel cleanup
     element.titel.value = element.titel.value.trim();
-
     // Beschrijving Cleanup
     element.beschrijving.value = element.beschrijving.value.trim();
     // Als er geen beschrijving beschikbaar is. Informeer dan de gebruiker.
@@ -102,7 +95,6 @@ fetchData.then(function(data) {
 
   // Start Graph section
   const svg = d3.select("svg");
-
   const width = +svg.attr("width");
   const height = +svg.attr("height");
 
@@ -112,9 +104,10 @@ fetchData.then(function(data) {
   //   console.log(groupedByYear)
 
   // Count total items.
-  let arraySize= 0;
+  // For future development
+  let arraySize = 0;
   data.forEach(element => {
-    arraySize++
+    arraySize++;
   });
 
   const render = data => {
@@ -125,7 +118,6 @@ fetchData.then(function(data) {
     const innerWidth = width - margin.left - margin.right;
     const innerHeight = height - margin.top - margin.bottom;
 
-
     // Set Domain and Range for xScale
     const xScale = d3
       .scaleLinear()
@@ -133,6 +125,7 @@ fetchData.then(function(data) {
       .range([0, counter]);
 
     // Set Domain and Range for yScale
+    //Set distance between bars with Scaleband
     const yScale = d3
       .scaleBand()
       .domain(data.map(yValue))
@@ -140,22 +133,26 @@ fetchData.then(function(data) {
       .padding(0.1);
 
     // const yAxis = d3.axisLeft(yScale);
-// set svg to const g to work with
+    // set svg to const g to work with
     const g = svg
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
+    //Set Axis and ticks to y axis
     g.append("g").call(d3.axisLeft(yScale));
     g.append("g")
       .call(d3.axisBottom(xScale).tickSize(-innerWidth))
       .attr("transform", `translate(0,${innerHeight})`);
 
+    // Set title to graph
     g.append("text")
       .attr("x", width / 2)
       .attr("y", 0 - margin.top / 4)
       .attr("text-anchor", "middle")
       .text("Aantal foto's per jaartal");
 
+    // Display all objects with a rectangle. (to make bars)
+    //Set width per bar based on full size SVG
     g.selectAll("rect")
       .data(gallerij)
       .enter()
@@ -169,7 +166,6 @@ fetchData.then(function(data) {
     //     .attr("transform","translate(50,30)")
     //     .style("font-size","12px")
     //     .call(d3.legend)
-
   };
 
   //Activeer render functie met gegeven dataset
