@@ -106,6 +106,11 @@ fetchData.then(function(data) {
   const width = +svg.attr("width");
   const height = +svg.attr("height");
 
+//   var groupedByYear = d3.nest()
+//   .key(function(d) { return d.date; })
+//   .entries(data.date);
+//   console.log(groupedByYear)
+
   const render = data => {
     const xValue = d => d.date.value;
     const yValue = d => d.date.value;
@@ -132,7 +137,8 @@ fetchData.then(function(data) {
 
     g.append("g").call(d3.axisLeft(yScale));
     g.append("g")
-      .call(d3.axisBottom(xScale))
+      .call(d3.axisBottom(xScale)
+        .tickSize(-innerWidth))
       .attr("transform", `translate(0,${innerHeight})`);
 
     g.append("text")
