@@ -169,6 +169,7 @@ fetchData.then(function(data) {
   render(gallerij);
 
   // !!! UNUSED CODE !!!
+  // Kept for learning purposes
 
   //  console.log(gallerij);
 
