@@ -155,6 +155,12 @@ fetchData.then(function(data) {
       .attr("width", d => xScale(xValue(d)))
       .attr("height", yScale.bandwidth());
 
+    // g.append("legend")
+    //     .attr("class","legend")
+    //     .attr("transform","translate(50,30)")
+    //     .style("font-size","12px")
+    //     .call(d3.legend)
+
     console.log("domein" + xScale.range());
   };
   render(gallerij);
