@@ -1,3 +1,4 @@
+
 // setup api url and query
 const url =    'https://api.data.netwerkdigitaalerfgoed.nl/datasets/ivo/NMVW/services/NMVW-27/sparql';
 const query = `
@@ -29,7 +30,7 @@ const query = `
 
                 }
 
-            }LIMIT 10000`;
+            }LIMIT 100`;
 
         const fetchData = d3.json(url+'?query='+encodeURIComponent(query)+'&format=json')
         .then(function(data) {
@@ -71,7 +72,7 @@ const query = `
                  //.replace(/\D/g, "")
 
                  
-                 //Replace alle maanden
+                 //Vervang alle maanden
                  .replace("januari", "")
                  .replace("februari", "")
                  .replace("maart", "")
@@ -84,23 +85,16 @@ const query = `
                  .replace("oktober", "")
                  .replace("november", "")
                  .replace("december", "")
-
-                 //Vervang alle numerieke maanden
+                //Verwijder alle witruimte voor en aan het end van de string
                 .trim(" ")
-
                 //only keep last year from entry
                 .substr(-4, 4)
-
                 // String naar nummer
                 element.date.value = parseInt(element.date.value)
-                // console.log(element.date.value)
-                // console.log("hey: ", element.date.value)
+
                 // Titel cleanup
                 element.titel.value = element.titel.value
-                // .toLowerCase()
                 .trim()
-                // console.log(element.titel.value)
-
 
                 // Beschrijving Cleanup
                 element.beschrijving.value = element.beschrijving.value
@@ -109,11 +103,39 @@ const query = `
                 if(element.beschrijving.value == ""){
                     element.beschrijving.value = "Er is geen beschrijving beschikbaar"
                 }
-                //console.log(element.beschrijving.value)
-
             })
 
-            console.log(gallerij)
+            // console.log(gallerij)
+
+// Start Graph section
+const svg = d3.select('svg');
+
+const width = +svg.attr('width');
+const height = +svg.attr('height');
+
+const render = data => {
+    const xValue = d => d.date.value;
+    const yValue = d => d.date.value;
+    
+    const xScale = d3.scaleLinear()
+        .domain([0, d3.max(data, xValue)])
+        .range([0, width]);
+
+    const yScale = d3.scaleBand()
+    .domain(data.map(yValue))
+    .range([0, height]);
+  
+    svg.selectAll('rect').data(gallerij)
+    .enter().append('rect')
+    .attr('y', d => yScale(yValue(d)))
+     .attr('width', d => xScale(xValue(d)))
+     .attr('height', yScale.bandwidth());
+
+
+     console.log("domein" + xScale.range());
+
+};
+render(gallerij);
 
 
 
@@ -180,7 +202,7 @@ const query = `
     //        .catch(err => console.error(err));
 
     // Fetch Query
-            
+
 
           });
           
