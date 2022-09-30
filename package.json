@@ -25,6 +25,6 @@
   },
   "homepage": "https://github.com/robert-hoekstra/functional-programming#readme",
   "dependencies": {
-    "d3": "^5.12.0"
+    "d3": "^7.6.1"
   }
 }
